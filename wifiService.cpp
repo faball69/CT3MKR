@@ -31,8 +31,8 @@ void initWifi() {
   print(WiFi.SSID());
   print(": IPaddr=");
   IPAddress ip=WiFi.localIP();
-  print(ip[0]);print(".");print(ip[1]);print(".");print(ip[2]);print(".");println(ip[3]);
-  // OTA service
+  long rssi = WiFi.RSSI();
+  print(ip[0]);print(".");print(ip[1]);print(".");print(ip[2]);print(".");print(ip[3]);print(" >>>");print((int)rssi);println("dBm");  // OTA service
   ArduinoOTA.begin(WiFi.localIP(), OTA_USER, OTA_PSWD, InternalStorage);
 }
 
