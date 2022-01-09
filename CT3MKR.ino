@@ -50,6 +50,8 @@ void setup() {
   WiFiDrv::analogWrite(26, 0);WiFiDrv::analogWrite(25, 0);WiFiDrv::analogWrite(27, 1);
 }
 
+int commFail=0; // comunication fail count > 100sec reset board
+
 void loop() {
   long tNow=millis();
   if(tNow>tLast+5000 && reset)
@@ -64,7 +66,15 @@ void loop() {
     handleTemp(ambT);
     bool newState=scheduler();
     if(newState!=state || firstLoop) {
-      if(plant.nCh!=-1 && turn(newState)) {
+      bool bRet=turn(newState);
+      if(!bRet) {
+        commFail++;
+        if(commFail>10)
+          reset=true;
+      }
+      else
+        commFail=0;
+      if(plant.nCh!=-1 && bRet) {
         state=newState;
         println(state?"Heater is ON":"Heater is OFF");
         if(serial!=1) {
